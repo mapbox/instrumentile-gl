@@ -1,0 +1,35 @@
+{
+  "name": "instrumentile-gl",
+  "version": "0.0.0",
+  "description": "tileload metrics for Mapbox GL",
+  "main": "index.js",
+  "repository": "git://github.com/mapbox/instrumentile-gl.git",
+  "keywords": [
+    "mapbox gl",
+    "plugin",
+    "tileload",
+    "metrics",
+    "tile count",
+    "pong"
+  ],
+  "dependencies": {
+    "eslint": "^4.17.0",
+    "mapbox-events": "~0.1.5"
+  },
+  "devDependencies": {
+    "browserify": "^6.3.2",
+    "serve": "^1.4.0",
+    "tape": "2.13.x",
+    "watchify": "^2.3.0"
+  },
+  "scripts": {
+    "start": "watchify --standalone instrumentile-gl -d ./index.js -o ./bundle.js & serve",
+    "test": "browserify --standalone instrumentile-gl -d ./index.js -o ./test/bundle.js && node test/test-client.js"
+  },
+  "eslintConfig": {
+    "extends": "mourner"
+  },
+  "author": "Tom Lee <tlee@mapbox.com>",
+  "license": "ISC",
+  "private": true
+}
