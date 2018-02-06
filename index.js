@@ -75,6 +75,7 @@ Instrumentile.prototype._dataLoadEvent = function(label, p) {
     response = p.responseEnd - p.responseStart;
     this.events.push({
         id: this.id,
+        source: this.source,
         event: label,
         url: url.toString(),
         timeTaken: p.duration,
@@ -83,8 +84,7 @@ Instrumentile.prototype._dataLoadEvent = function(label, p) {
         TCP: TCP,
         SSL: SSL,
         request: request,
-        response: response,
-        source: this.source
+        response: response
     });
 };
 
@@ -93,6 +93,7 @@ Instrumentile.prototype._interactionEvent = function(label, e) {
     var lngLat = e.lngLat || this.map.getCenter();
     this.events.push({
         id: this.id,
+        source: this.source,
         event: label,
         lat: lngLat.lat,
         lng: lngLat.lng,
@@ -130,6 +131,7 @@ Instrumentile.prototype._mapLoadEvent = function(e) {
 
     this.events.push({
         id: this.id,
+        source: this.source,
         event: 'map.load',
         lat: center.lat,
         lng: center.lng,
