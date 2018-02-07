@@ -14,7 +14,8 @@
   ],
   "dependencies": {
     "eslint": "^4.17.0",
-    "mapbox-events": "~0.1.5"
+    "mapbox-events": "~0.1.5",
+    "mapbox-gl-js-mock": "^0.28.0"
   },
   "devDependencies": {
     "browserify": "^6.3.2",

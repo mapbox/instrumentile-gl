@@ -15,19 +15,22 @@ function Instrumentile(map, options) {
     if (!this.map._collectResourceTiming)
         throw new TypeError('Instrumentile-GL requires Map.collectResourceTiming to be true (available in Mapbox GL JS >=0.44.0).');
 
-    this._events = Events({
+    if (this.options.stub && this.options.stub.events)
+        this.events = this.options.stub.events;
+    else
+        this.events = Events({
         api: this.options.api,
         token: this.options.token,
         flushAt: this.options.flushAt,
         flushAfter: this.options.flushAfter
     });
 
-    this.events = {
-        push: (e) => {
-            console.log(e);
-            // this._events.push(e);
-        }
-    };
+    if (this.options.stub && this.options.stub.performance)
+        this.performance = this.options.stub.performance;
+    else if (window && window.performance)
+        this.performance = performance;
+    else
+        this.performance = false;
 
     var that = this;
     map.on('data', function(mde) {
@@ -55,8 +58,8 @@ function Instrumentile(map, options) {
 
 Instrumentile.prototype._performance = function() {
     //use performance.now over new Date() when available
-    if (window.performance && window.performance.now)
-        return window.performance.now();
+    if (this.performance && this.performance.now)
+        return this.performance.now();
     else
         return new Date();
 };
@@ -110,15 +113,15 @@ Instrumentile.prototype._mapLoadEvent = function(e) {
         if (this.map.style.stylesheet.id)
             mapId.push(this.map.style.stylesheet.id || '');
         this.id = mapId.join('/');
-    }        
+    }
 
     var DNS, TCP, SSL, loadtime, request, response, appCache;
     var center = this.map.getCenter();
     var zoom = this.map.getZoom();
     var p = {};
 
-    if (window.performance) {
-        p = performance.timing;
+    if (this.performance) {
+        p = this.performance.timing;
         DNS = p.domainLookupEnd - p.domainLookupStart;
         TCP = p.connectEnd - p.connectStart;
         SSL = p.secureConnectionStart ?
