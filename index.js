@@ -1,5 +1,16 @@
 var Events = require('mapbox-events');
 
+// URL polyfill
+if (typeof URL === 'undefined') {
+    var URL = function(s) {
+        this.url = s;
+        this.search = s.replace(/^.*?\?/, '?');
+    }
+    URL.prototype.toString = function() {
+        return this.url.split('?')[0] + (this.search ? '?' + this.search : '');
+    }
+}
+
 function Instrumentile(map, options) {
     this.map = map;
     this.options = options || {};
