@@ -21,11 +21,12 @@ const perfStub = {
     now: () => { return +new Date(); }
 };
 
-function mapInit() {
+function mapInit(opts) {
+    opts = opts || {};
     return new mbxgljs.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v9',
-        collectResourceTiming: true,
+        collectResourceTiming: typeof opts.collectResourceTiming === 'undefined' ? 'true' : opts.collectResourceTiming,
         center: [1, 2],
         zoom: 3
     });
@@ -67,6 +68,35 @@ tape('map load event', (t) => {
             performance: perfStub
         }
     });
+});
+
+tape('throws error when collectResourceTiming=false', (t) => {
+    const map = mapInit({ collectResourceTiming: false });
+    const eventsStub = { push: () => {} };
+    const inst = instrumentile.bind(null, map, {
+        token: TOKEN,
+        source: 'test',
+        stub: {
+            events: eventsStub,
+            performance: perfStub
+        }
+    });
+    t.throws(inst, /Instrumentile-GL requires Map\.collectResourceTiming to be true/i, 'throws when collectResourceTiming=false');
+    t.end();
+});
+
+tape('throws error on missing token', (t) => {
+    const map = mapInit();
+    const eventsStub = { push: () => {} };
+    const inst = instrumentile.bind(null, map, {
+        source: 'test',
+        stub: {
+            events: eventsStub,
+            performance: perfStub
+        }
+    });
+    t.throws(inst, /You must provide a valid Mapbox token/i, 'throws on missing token');
+    t.end();
 });
 
 tape('click event', (t) => {
@@ -195,11 +225,5 @@ tape('geojson load event', (t) => {
     t.end();
 });
 
-tape('throws error when collectResourceTiming=false', (t) => {
-    t.end();
-});
 
-tape('throws error on missing token', (t) => {
-    t.end();
-});
 */
