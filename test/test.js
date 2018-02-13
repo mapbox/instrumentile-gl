@@ -1,6 +1,6 @@
 const tape = require('tape');
 const mbxgljs = require('mapbox-gl-js-mock');
-const instrumentile = require('../index.js');
+const instrumentile = require('..');
 const TOKEN = 'pk.abcdefghijklmnopqrstuvwxyz1234567890';
 
 const perfStub = {
@@ -20,6 +20,10 @@ const perfStub = {
     },
     now: () => { return +new Date(); }
 };
+
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 function mapInit(opts) {
     opts = opts || {};
@@ -163,7 +167,7 @@ tape('vt load event', (t) => {
                 SSL: 833.8100000000001,
                 TCP: 0,
                 event: 'source.vt',
-                host: undefined,
+                host: 'a.tiles.mapbox.com',
                 id: 'mapbox/testmap',
                 request: 10.700000000000045,
                 response: 5.694999999999936,
@@ -220,10 +224,55 @@ tape('vt load event', (t) => {
 });
 
 
-/*
-tape('geojson load event', (t) => {
-    t.end();
+tape('geojson load & setData events', (t) => {
+    const map = mapInit();
+
+    let eventCount = 0;
+
+    const eventsStub = {
+        push: (e) => {
+            if (e.event !== 'source.geojson')
+                return;
+
+            ['DNS', 'TCP', 'SSL', 'request', 'response', 'timeTaken'].forEach((tk) => {
+                t.ok(isNumeric(e[tk]) && (e[tk] > 0), tk + ' looks ok');
+                delete e[tk];
+            });
+
+            const expected = {
+                event: 'source.geojson',
+                host: 'localhost:5000',
+                id: 'mapbox/testmap',
+                source: 'instrumentileTest',
+                url: 'http://localhost:5000/test.geojson'
+            };
+
+            if (eventCount === 0) {
+                t.deepEquals(e, expected, 'geojson map.addSource produces expected load event');
+                eventCount += 1;
+                map.getSource('fakeGeoJSONsource').setData('http://localhost:5000/test2.geojson');
+            }
+            else {
+                expected.url = 'http://localhost:5000/test2.geojson';
+                t.deepEquals(e, expected, 'geojson setData produces expected event');
+                t.end();
+            }
+        }
+    };
+
+    const inst = instrumentile(map, {
+        token: TOKEN,
+        source: 'instrumentileTest',
+        stub: {
+            events: eventsStub,
+            performance: perfStub
+        }
+    });
+
+    map.on('load', () => {
+        map.addSource('fakeGeoJSONsource', {
+            type: 'geojson',
+            data: 'http://localhost:5000/test.geojson'
+        });
+    });
 });
-
-
-*/
