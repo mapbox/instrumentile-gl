@@ -1,3 +1,5 @@
+'use strict';
+
 const tape = require('tape');
 const mbxgljs = require('mapbox-gl-js-mock');
 const instrumentile = require('..');
@@ -64,7 +66,7 @@ tape('map load event', (t) => {
 
     const map = mapInit();
 
-    const inst = instrumentile(map, {
+    instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -75,8 +77,8 @@ tape('map load event', (t) => {
 });
 
 tape('throws error when collectResourceTiming=false', (t) => {
-    const map = mapInit({ collectResourceTiming: false });
-    const eventsStub = { push: () => {} };
+    const map = mapInit({collectResourceTiming: false});
+    const eventsStub = {push: () => {}};
     const inst = instrumentile.bind(null, map, {
         token: TOKEN,
         source: 'test',
@@ -91,7 +93,7 @@ tape('throws error when collectResourceTiming=false', (t) => {
 
 tape('throws error on missing token', (t) => {
     const map = mapInit();
-    const eventsStub = { push: () => {} };
+    const eventsStub = {push: () => {}};
     const inst = instrumentile.bind(null, map, {
         source: 'test',
         stub: {
@@ -108,7 +110,7 @@ tape('click event', (t) => {
         push: (e) => {
             if (e.event !== 'map.click')
                 return;
-            const expected = { event: 'map.click', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3 };
+            const expected = {event: 'map.click', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
             t.deepEquals(e, expected, 'click event is as expected');
             t.end();
         }
@@ -116,7 +118,7 @@ tape('click event', (t) => {
 
     const map = mapInit();
 
-    const inst = instrumentile(map, {
+    instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -126,7 +128,7 @@ tape('click event', (t) => {
     });
 
     setTimeout(() => {
-        map.fire('click', { lngLat: { lng: 1.1, lat: 2.2 } });
+        map.fire('click', {lngLat: {lng: 1.1, lat: 2.2}});
     }, 0);
 });
 
@@ -135,7 +137,7 @@ tape('dragend event', (t) => {
         push: (e) => {
             if (e.event !== 'map.dragend')
                 return;
-            const expected = { event: 'map.dragend', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3 };
+            const expected = {event: 'map.dragend', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
             t.deepEquals(e, expected, 'dragend event is as expected');
             t.end();
         }
@@ -143,7 +145,7 @@ tape('dragend event', (t) => {
 
     const map = mapInit();
 
-    const inst = instrumentile(map, {
+    instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -153,7 +155,7 @@ tape('dragend event', (t) => {
     });
 
     setTimeout(() => {
-        map.fire('dragend', { lngLat: { lng: 1.1, lat: 2.2 } });
+        map.fire('dragend', {lngLat: {lng: 1.1, lat: 2.2}});
     }, 0);
 });
 
@@ -182,7 +184,7 @@ tape('vt load event', (t) => {
 
     const map = mapInit();
 
-    const inst = instrumentile(map, {
+    instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -194,13 +196,13 @@ tape('vt load event', (t) => {
     setTimeout(() => {
         map.fire('data', {
             tile: {
-                resourceTiming: [ {
-                    name: "https://a.tiles.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/4/14/6.vector.pbf?access_token=pk.xyz123",
-                    entryType: "resource",
+                resourceTiming: [{
+                    name: 'https://a.tiles.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/4/14/6.vector.pbf?access_token=pk.xyz123',
+                    entryType: 'resource',
                     startTime: 833.8100000000001,
                     duration: 21.105000000000018,
-                    initiatorType: "xmlhttprequest",
-                    nextHopProtocol: "http/1.1",
+                    initiatorType: 'xmlhttprequest',
+                    nextHopProtocol: 'http/1.1',
                     workerStart: 0,
                     redirectStart: 0,
                     redirectEnd: 0,
@@ -217,7 +219,7 @@ tape('vt load event', (t) => {
                     encodedBodySize: 13511,
                     decodedBodySize: 20187,
                     serverTiming: []
-                } ]
+                }]
             }
         });
     }, 0);
@@ -251,8 +253,7 @@ tape('geojson load & setData events', (t) => {
                 t.deepEquals(e, expected, 'geojson map.addSource produces expected load event');
                 eventCount += 1;
                 map.getSource('fakeGeoJSONsource').setData('http://localhost:5000/test2.geojson');
-            }
-            else {
+            } else {
                 expected.url = 'http://localhost:5000/test2.geojson';
                 t.deepEquals(e, expected, 'geojson setData produces expected event');
                 t.end();
@@ -260,7 +261,7 @@ tape('geojson load & setData events', (t) => {
         }
     };
 
-    const inst = instrumentile(map, {
+    instrumentile(map, {
         token: TOKEN,
         source: 'instrumentileTest',
         stub: {

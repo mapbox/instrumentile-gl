@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "eslint": "^4.17.0",
+    "eslint-config-mourner": "^2.0.3",
     "mapbox-events": "~0.1.5",
     "mapbox-gl-js-mock": "^0.28.0"
   },
@@ -25,10 +26,14 @@
   },
   "scripts": {
     "start": "watchify --standalone instrumentile-gl -d ./index.js -o ./bundle.js & serve",
-    "test": "browserify --standalone instrumentile-gl -d ./index.js -o ./test/bundle.js && node test/test-client.js"
+    "test": "eslint index.js test/*test.js html/*.js && tape test/*test.js",
+    "test-browser": "browserify --standalone instrumentile-gl -d ./html/index.js -o ./html/bundle.js & (cd html && serve)"
   },
   "eslintConfig": {
-    "extends": "mourner"
+    "extends": "mourner",
+     "rules": {
+       "new-cap": [ 1, { "newIsCap": false } ]
+    }
   },
   "author": "Tom Lee <tlee@mapbox.com>",
   "license": "ISC",
