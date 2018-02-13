@@ -13,26 +13,32 @@
     "pong"
   ],
   "dependencies": {
-    "eslint": "^4.17.0",
-    "eslint-config-mourner": "^2.0.3",
-    "mapbox-events": "~0.1.5",
-    "mapbox-gl-js-mock": "^0.28.0"
+    "mapbox-events": "~0.1.5"
   },
   "devDependencies": {
     "browserify": "^6.3.2",
+    "eslint": "^4.17.0",
+    "eslint-config-mourner": "^2.0.3",
+    "mapbox-gl": "^0.44.0",
+    "mapbox-gl-js-mock": "^0.28.0",
     "serve": "^1.4.0",
     "tape": "2.13.x",
     "watchify": "^2.3.0"
   },
   "scripts": {
     "start": "watchify --standalone instrumentile-gl -d ./index.js -o ./bundle.js & serve",
-    "test": "eslint index.js test/*test.js html/*.js && tape test/*test.js",
-    "test-browser": "browserify --standalone instrumentile-gl -d ./html/index.js -o ./html/bundle.js & (cd html && serve)"
+    "test": "eslint index.js test/*test.js html/index.js && tape test/*test.js",
+    "test-browser": "browserify --standalone instrumentile-gl -d ./html/index.js -o ./html/bundle.js && (cd html && serve)"
   },
   "eslintConfig": {
     "extends": "mourner",
-     "rules": {
-       "new-cap": [ 1, { "newIsCap": false } ]
+    "rules": {
+      "new-cap": [
+        1,
+        {
+          "newIsCap": false
+        }
+      ]
     }
   },
   "author": "Tom Lee <tlee@mapbox.com>",
