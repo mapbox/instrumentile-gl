@@ -4,7 +4,8 @@ var Events = require('mapbox-events');
 if (typeof URL === 'undefined') {
     var URL = function(s) {
         this.url = s;
-        this.search = s.replace(/^.*?\?/, '?');
+        this.search = s.split('?').length > 1 ? s.split('?')[1] : '';
+        this.hostname = this.url.replace(/https?:\/\/([^\/]+)\/.*$/, '$1');
     }
     URL.prototype.toString = function() {
         return this.url.split('?')[0] + (this.search ? '?' + this.search : '');
