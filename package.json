@@ -42,6 +42,5 @@
     }
   },
   "author": "Tom Lee <tlee@mapbox.com>",
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }
