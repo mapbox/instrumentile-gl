@@ -21,7 +21,7 @@ npm install @mapbox/instrumentile-gl
 
 ```javascript
 const mapboxgl = require('mapbox-gl');
-const instrumentile = require('instrumentile-gl');
+const instrumentile = require('@mapbox/instrumentile-gl');
 
 mapboxgl.accessToken = VALID_ACCESS_TOKEN;
 
