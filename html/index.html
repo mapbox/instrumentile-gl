@@ -12,9 +12,7 @@
   #diagnostic h2 { margin-top: 0; }
   #diagnostic ul { list-style: none; padding: 0; margin: 0;}
   #diagnostic li span { color: red; margin-right: 0.5em; }
-  #diagnostic li span:before { content: 'X'; }
   #diagnostic li.success span { color: green; }
-  #diagnostic li.success span:before { content: '\2713'; }
 }
 </style>
 </head>
@@ -23,12 +21,12 @@
 <div id='diagnostic'>
 	<h2>Instrumentile Events</h2>
 	<ul>
-		<li id="map-load"><span></span>map.load</li>
-		<li id="source-vt"><span></span>source.vt</li>
-		<li id="source-geojson-load"><span></span>source.geojson (source load)</li>
-		<li id="source-geojson-setdata"><span></span>source.geojson (setData)</li>
-		<li id="map-click"><span></span>map.click</li>
-		<li id="map-dragend"><span></span>map.dragend</li>
+		<li id="map-load"><span>X</span>map.load</li>
+		<li id="source-vt"><span>X</span>source.vt</li>
+		<li id="source-geojson-load"><span>X</span>source.geojson (source load)</li>
+		<li id="source-geojson-setdata"><span>X</span>source.geojson (setData)</li>
+		<li id="map-click"><span>X</span>map.click</li>
+		<li id="map-dragend"><span>X</span>map.dragend</li>
 		
 	</ul>
 </div>

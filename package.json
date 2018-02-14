@@ -20,7 +20,7 @@
     "eslint": "^4.17.0",
     "eslint-config-mourner": "^2.0.3",
     "mapbox-gl": "^0.44.0",
-    "mapbox-gl-js-mock": "^0.28.0",
+    "mapbox-gl-js-mock": "git@github.com:mapbox/mapbox-gl-js-mock.git#instrumentile-gl-tests",
     "serve": "^1.4.0",
     "tape": "2.13.x",
     "watchify": "^2.3.0"
