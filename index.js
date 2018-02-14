@@ -2,7 +2,7 @@
 
 'use strict';
 
-var Events = require('mapbox-events');
+var Events = require('@mapbox/mapbox-events');
 
 function URLParse(s) {
     this.url = s;

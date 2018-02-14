@@ -13,7 +13,7 @@
     "pong"
   ],
   "dependencies": {
-    "mapbox-events": "~0.1.5"
+    "@mapbox/mapbox-events": "^0.1.5"
   },
   "devDependencies": {
     "browserify": "^6.3.2",
