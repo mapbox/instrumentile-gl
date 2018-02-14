@@ -1,4 +1,17 @@
-var Events = require('mapbox-events');
+/*eslint-env browser*/
+
+'use strict';
+
+var Events = require('@mapbox/mapbox-events');
+
+function URLParse(s) {
+    this.url = s;
+    this.search = s.split('?').length > 1 ? s.split('?')[1] : '';
+    this.hostname = this.url.replace(/https?:\/\/([^/]+)\/.*$/, '$1');
+}
+URLParse.prototype.toString = function () {
+    return this.url.split('?')[0] + (this.search ? '?' + this.search : '');
+};
 
 function Instrumentile(map, options) {
     this.map = map;
@@ -11,30 +24,32 @@ function Instrumentile(map, options) {
 
     if (!this.options.token)
         throw new TypeError('You must provide a valid Mapbox token');
-    
+
     if (!this.map._collectResourceTiming)
         throw new TypeError('Instrumentile-GL requires Map.collectResourceTiming to be true (available in Mapbox GL JS >=0.44.0).');
 
-    this._events = Events({
-        api: this.options.api,
-        token: this.options.token,
-        flushAt: this.options.flushAt,
-        flushAfter: this.options.flushAfter
-    });
+    if (this.options.stub && this.options.stub.events)
+        this.events = this.options.stub.events;
+    else
+        this.events = Events({
+            api: this.options.api,
+            token: this.options.token,
+            flushAt: this.options.flushAt,
+            flushAfter: this.options.flushAfter
+        });
 
-    this.events = {
-        push: (e) => {
-            console.log(e);
-            // this._events.push(e);
-        }
-    };
+    if (this.options.stub && this.options.stub.performance)
+        this.performance = this.options.stub.performance;
+    else if (window && window.performance)
+        this.performance = performance;
+    else
+        this.performance = false;
 
     var that = this;
-    map.on('data', function(mde) {
+    map.on('data', function (mde) {
         // vector tile load event
-        if (mde.tile && mde.tile.resourceTiming && (mde.tile.resourceTiming.length > 0)) {
+        if (mde.tile && mde.tile.resourceTiming && (mde.tile.resourceTiming.length > 0))
             that._dataLoadEvent('source.vt', mde.tile.resourceTiming[mde.tile.resourceTiming.length - 1]);
-        }
         // GeoJSON load event
         else if (
             (mde.source) &&
@@ -53,26 +68,26 @@ function Instrumentile(map, options) {
     map.on('dragend', this._interactionEvent.bind(this, 'map.dragend'));
 }
 
-Instrumentile.prototype._performance = function() {
+Instrumentile.prototype._performance = function () {
     //use performance.now over new Date() when available
-    if (window.performance && window.performance.now)
-        return window.performance.now();
+    if (this.performance && this.performance.now)
+        return this.performance.now();
     else
         return new Date();
 };
 
-Instrumentile.prototype._dataLoadEvent = function(label, p) {
-    var url = new URL(p.name);
+Instrumentile.prototype._dataLoadEvent = function (label, p) {
+    var url = new URLParse(p.name);
     url.search = url.search
         .split('&')
-        .filter(function(param) { return !/(^|\?)access_token=.*/.test(param); })
+        .filter(function (param) { return !/(^|\?)access_token=.*/.test(param); })
         .join('&');
-    DNS = p.domainLookupEnd - p.domainLookupStart;
-    TCP = p.connectEnd - p.connectStart;
-    SSL = (!isNaN(parseFloat(p.secureConnectionStart)) && isFinite(p.secureConnectionStart)) ?
+    var DNS = p.domainLookupEnd - p.domainLookupStart;
+    var TCP = p.connectEnd - p.connectStart;
+    var SSL = (!isNaN(parseFloat(p.secureConnectionStart)) && isFinite(p.secureConnectionStart)) ?
         p.connectEnd - p.secureConnectionStart : undefined;
-    request = p.responseStart - p.requestStart;
-    response = p.responseEnd - p.responseStart;
+    var request = p.responseStart - p.requestStart;
+    var response = p.responseEnd - p.responseStart;
     this.events.push({
         id: this.id,
         source: this.source,
@@ -88,7 +103,7 @@ Instrumentile.prototype._dataLoadEvent = function(label, p) {
     });
 };
 
-Instrumentile.prototype._interactionEvent = function(label, e) {
+Instrumentile.prototype._interactionEvent = function (label, e) {
     var zoom = this.map.getZoom();
     var lngLat = e.lngLat || this.map.getCenter();
     this.events.push({
@@ -101,7 +116,7 @@ Instrumentile.prototype._interactionEvent = function(label, e) {
     });
 };
 
-Instrumentile.prototype._mapLoadEvent = function(e) {
+Instrumentile.prototype._mapLoadEvent = function () {
     // assemble map style ID once component parts are loaded/available
     var mapId = [];
     if (this.map.style && this.map.style.stylesheet) {
@@ -110,15 +125,15 @@ Instrumentile.prototype._mapLoadEvent = function(e) {
         if (this.map.style.stylesheet.id)
             mapId.push(this.map.style.stylesheet.id || '');
         this.id = mapId.join('/');
-    }        
+    }
 
     var DNS, TCP, SSL, loadtime, request, response, appCache;
     var center = this.map.getCenter();
     var zoom = this.map.getZoom();
     var p = {};
 
-    if (window.performance) {
-        p = performance.timing;
+    if (this.performance) {
+        p = this.performance.timing;
         DNS = p.domainLookupEnd - p.domainLookupStart;
         TCP = p.connectEnd - p.connectStart;
         SSL = p.secureConnectionStart ?
@@ -144,8 +159,8 @@ Instrumentile.prototype._mapLoadEvent = function(e) {
         response: response,
         appCache: appCache
     });
-}
+};
 
-module.exports = function(map, options) {
+module.exports = function (map, options) {
     return new Instrumentile(map, options);
 };
