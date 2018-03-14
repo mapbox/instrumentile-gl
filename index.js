@@ -35,7 +35,8 @@ function Instrumentile(map, options) {
             api: this.options.api,
             token: this.options.token,
             flushAt: this.options.flushAt,
-            flushAfter: this.options.flushAfter
+            flushAfter: this.options.flushAfter,
+            version: 'v2'
         });
 
     if (this.options.stub && this.options.stub.performance)
