@@ -35,7 +35,8 @@ function Instrumentile(map, options) {
             api: this.options.api,
             token: this.options.token,
             flushAt: this.options.flushAt,
-            flushAfter: this.options.flushAfter
+            flushAfter: this.options.flushAfter,
+            version: 2
         });
 
     if (this.options.stub && this.options.stub.performance)
@@ -49,7 +50,7 @@ function Instrumentile(map, options) {
     map.on('data', function (mde) {
         // vector tile load event
         if (mde.tile && mde.tile.resourceTiming && (mde.tile.resourceTiming.length > 0))
-            that._dataLoadEvent('source.vt', mde.tile.resourceTiming[mde.tile.resourceTiming.length - 1]);
+            that._dataLoadEvent('instrumentile.source.vt', mde.tile.resourceTiming[mde.tile.resourceTiming.length - 1]);
         // GeoJSON load event
         else if (
             (mde.source) &&
@@ -58,14 +59,13 @@ function Instrumentile(map, options) {
             (typeof mde.source.data === 'string') &&
             (mde.resourceTiming) &&
             (mde.resourceTiming.length > 0)
-        ) {
-            that._dataLoadEvent('source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
-        }
+        )
+            that._dataLoadEvent('instrumentile.source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
     });
 
     map.on('load', this._mapLoadEvent.bind(this));
-    map.on('click', this._interactionEvent.bind(this, 'map.click'));
-    map.on('dragend', this._interactionEvent.bind(this, 'map.dragend'));
+    map.on('click', this._interactionEvent.bind(this, 'instrumentile.map.click'));
+    map.on('dragend', this._interactionEvent.bind(this, 'instrumentile.map.dragend'));
 }
 
 Instrumentile.prototype._performance = function () {
@@ -147,7 +147,7 @@ Instrumentile.prototype._mapLoadEvent = function () {
     this.events.push({
         id: this.id,
         source: this.source,
-        event: 'map.load',
+        event: 'instrumentile.map.load',
         lat: center.lat,
         lng: center.lng,
         zoom: zoom,

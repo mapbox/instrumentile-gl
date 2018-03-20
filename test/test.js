@@ -41,7 +41,7 @@ function mapInit(opts) {
 tape('map load event', (t) => {
     const eventsStub = {
         push: (e) => {
-            if (e.event !== 'map.load')
+            if (e.event !== 'instrumentile.map.load')
                 return;
             t.ok(e.loadtime, 'loadtime property exists');
             delete e.loadtime; // has timestamp built-in so this won't remain static
@@ -50,7 +50,7 @@ tape('map load event', (t) => {
                 SSL: 3,
                 TCP: 4,
                 appCache: 2,
-                event: 'map.load',
+                event: 'instrumentile.map.load',
                 id: 'mapbox/testmap',
                 lat: 2,
                 lng: 1,
@@ -108,9 +108,9 @@ tape('throws error on missing token', (t) => {
 tape('click event', (t) => {
     const eventsStub = {
         push: (e) => {
-            if (e.event !== 'map.click')
+            if (e.event !== 'instrumentile.map.click')
                 return;
-            const expected = {event: 'map.click', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
+            const expected = {event: 'instrumentile.map.click', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
             t.deepEquals(e, expected, 'click event is as expected');
             t.end();
         }
@@ -135,9 +135,9 @@ tape('click event', (t) => {
 tape('dragend event', (t) => {
     const eventsStub = {
         push: (e) => {
-            if (e.event !== 'map.dragend')
+            if (e.event !== 'instrumentile.map.dragend')
                 return;
-            const expected = {event: 'map.dragend', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
+            const expected = {event: 'instrumentile.map.dragend', id: 'mapbox/testmap', lat: 2.2, lng: 1.1, source: 'test', zoom: 3};
             t.deepEquals(e, expected, 'dragend event is as expected');
             t.end();
         }
@@ -162,13 +162,13 @@ tape('dragend event', (t) => {
 tape('vt load event', (t) => {
     const eventsStub = {
         push: (e) => {
-            if (e.event !== 'source.vt')
+            if (e.event !== 'instrumentile.source.vt')
                 return;
             const expected = {
                 DNS: 0,
                 SSL: 833.8100000000001,
                 TCP: 0,
-                event: 'source.vt',
+                event: 'instrumentile.source.vt',
                 host: 'a.tiles.mapbox.com',
                 id: 'mapbox/testmap',
                 request: 10.700000000000045,
@@ -177,7 +177,7 @@ tape('vt load event', (t) => {
                 timeTaken: 21.105000000000018,
                 url: 'https://a.tiles.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/4/14/6.vector.pbf'
             };
-            t.deepEquals(e, expected, 'source.vt event is as expected');
+            t.deepEquals(e, expected, 'instrumentile.source.vt event is as expected');
             t.end();
         }
     };
@@ -233,7 +233,7 @@ tape('geojson load & setData events', (t) => {
 
     const eventsStub = {
         push: (e) => {
-            if (e.event !== 'source.geojson')
+            if (e.event !== 'instrumentile.source.geojson')
                 return;
 
             ['DNS', 'TCP', 'SSL', 'request', 'response', 'timeTaken'].forEach((tk) => {
@@ -242,7 +242,7 @@ tape('geojson load & setData events', (t) => {
             });
 
             const expected = {
-                event: 'source.geojson',
+                event: 'instrumentile.source.geojson',
                 host: 'localhost:5000',
                 id: 'mapbox/testmap',
                 source: 'instrumentileTest',
