@@ -36,7 +36,7 @@ function Instrumentile(map, options) {
             token: this.options.token,
             flushAt: this.options.flushAt,
             flushAfter: this.options.flushAfter,
-            version: 'v2'
+            version: 2
         });
 
     if (this.options.stub && this.options.stub.performance)
@@ -59,9 +59,8 @@ function Instrumentile(map, options) {
             (typeof mde.source.data === 'string') &&
             (mde.resourceTiming) &&
             (mde.resourceTiming.length > 0)
-        ) {
+        )
             that._dataLoadEvent('instrumentile.source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
-        }
     });
 
     map.on('load', this._mapLoadEvent.bind(this));
