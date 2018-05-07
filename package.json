@@ -13,7 +13,8 @@
     "pong"
   ],
   "dependencies": {
-    "@mapbox/mapbox-events": "^0.2.1"
+    "@mapbox/mapbox-events": "^1.0.0",
+    "uglify-js": "^3.3.23"
   },
   "devDependencies": {
     "browserify": "^6.3.2",
@@ -28,7 +29,9 @@
   "scripts": {
     "start": "watchify --standalone instrumentile-gl -d ./index.js -o ./bundle.js & serve",
     "test": "eslint index.js test/*test.js html/index.js && tape test/*test.js",
-    "test-browser": "browserify --standalone instrumentile-gl -d ./html/index.js -o ./html/bundle.js && (cd html && serve)"
+    "test-browser": "browserify --standalone instrumentile-gl -d ./html/index.js -o ./html/bundle.js && (cd html && serve)",
+    "build": "mkdir -p ./dist && browserify --standalone instrumentile -d index.js | uglifyjs -m -c > dist/mapbox-gl-instrumentile.min.js",
+    "build-dev": "mkdir -p ./dist && browserify --standalone instrumentile -d index.js > dist/mapbox-gl-instrumentile.js"
   },
   "eslintConfig": {
     "extends": "mourner",
