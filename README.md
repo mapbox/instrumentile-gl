@@ -43,3 +43,7 @@ var inst = instrumentile(map, {
 Unit tests can be run with `npm test` and use [mapbox-gl-js-mock](https://github.com/mapbox/mapbox-gl-js-test). The somewhat tautologous nature of these unit tests means that **browser-based integration testing is essential**.
 
 To run these integration tests, run `npm run test-browser` and open your browser to `http://localhost:3000/`. Map load, GeoJSON and Vector Tile events should fire in the course of the map loading. You will need to click and pan the map to fire their corresponding events.
+
+## Deploying
+
+Ensure you are authed and run `bin/deploy.sh`.
