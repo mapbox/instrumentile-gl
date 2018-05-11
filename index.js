@@ -49,7 +49,6 @@ function Instrumentile(map, options) {
         }
     };
 
-
     if (this.options.stub && this.options.stub.performance)
         this.performance = this.options.stub.performance;
     else if (window && window.performance)
