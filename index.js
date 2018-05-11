@@ -14,10 +14,13 @@ URLParse.prototype.toString = function () {
 };
 
 function Instrumentile(map, options) {
+    var that = this;
+
     this.map = map;
     this.options = options || {};
     this.id = null;
     this.source = this.options.source || '';
+    this.schemaVersion = 2.1;
 
     if (!this.map)
         throw new TypeError('You must provide a valid Mapbox GL Map object');
@@ -29,15 +32,24 @@ function Instrumentile(map, options) {
         throw new TypeError('Instrumentile-GL requires Map.collectResourceTiming to be true (available in Mapbox GL JS >=0.44.0).');
 
     if (this.options.stub && this.options.stub.events)
-        this.events = this.options.stub.events;
+        this._events = this.options.stub.events;
     else
-        this.events = Events({
+        this._events = Events({
             api: this.options.api,
             token: this.options.token,
             flushAt: this.options.flushAt,
             flushAfter: this.options.flushAfter,
-            version: 2
+            version: 2.1
         });
+
+    // apply schema versioning
+    this.events = {
+        push: function (e) {
+            e.schema = e.event + '/2.1';
+            that._events.push(e);
+        }
+    };
+
 
     if (this.options.stub && this.options.stub.performance)
         this.performance = this.options.stub.performance;
@@ -46,7 +58,6 @@ function Instrumentile(map, options) {
     else
         this.performance = false;
 
-    var that = this;
     map.on('data', function (mde) {
         // vector tile load event
         if (mde.tile && mde.tile.resourceTiming && (mde.tile.resourceTiming.length > 0))
