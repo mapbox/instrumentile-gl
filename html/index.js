@@ -27,16 +27,15 @@ document.addEventListener('DOMContentLoaded', function () {
             events: {
                 push: function (e) {
                     // check if event looks ok
-                    var numericProps = ['DNS', 'TCP', 'request', 'response', 'timeTaken'];
-                    if ((e.event === 'map.dragend') || (e.event === 'map.click'))
+                    var numericProps = ['DNS', 'TCP', 'request', 'response', 'timeTaken', 'transferSize', 'encodedBodySize', 'decodedBodySize'];
+                    if ((e.event === 'instrumentile.map.dragend') || (e.event === 'instrumentile.map.click'))
                         numericProps = ['lat', 'lng', 'zoom'];
-                    else if (e.event === 'map.load')
+                    else if (e.event === 'instrumentile.map.load')
                         numericProps = ['DNS', 'TCP', 'appCache', 'lat', 'lng', 'loadtime', 'request', 'response', 'zoom'];
                     if (!numericProps.every(function (p) {
                         var res = (e[p] || (e[p] === 0)) && isNumeric(e[p]);
-                        if (!res) {
+                        if (!res)
                             console.error('event ' + e.event + ' property ' + p + ' is not numeric');
-                        }
                         return res;
                     }))
                         return;
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
 
                     // note its reception
-                    var elemName = e.event.replace('.', '-');
+                    var elemName = e.event.replace('instrumentile.','').replace(/\./g, '-');
                     if (elemName === 'source-geojson')
                         elemName += '-' + (e.url.indexOf('step1') !== -1 ? 'load' : 'setdata');
                     var elem = document.getElementById(elemName);
