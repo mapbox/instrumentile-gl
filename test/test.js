@@ -18,7 +18,10 @@ const perfStub = {
         connectEnd: 110,
         requestStart: 111,
         responseStart: 115,
-        responseEnd: 125
+        responseEnd: 125,
+        transferSize: 0,
+        encodedBodySize: 1024,
+        decodedBodySize: 2048
     },
     now: () => { return +new Date(); }
 };
@@ -175,6 +178,9 @@ tape('vt load event', (t) => {
                 response: 5.694999999999936,
                 source: 'test',
                 timeTaken: 21.105000000000018,
+                decodedBodySize: 20187,
+                encodedBodySize: 13511,
+                transferSize: 14189,
                 url: 'https://a.tiles.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/4/14/6.vector.pbf'
             };
             t.deepEquals(e, expected, 'instrumentile.source.vt event is as expected');
@@ -246,7 +252,10 @@ tape('geojson load & setData events', (t) => {
                 host: 'localhost:5000',
                 id: 'mapbox/testmap',
                 source: 'instrumentileTest',
-                url: 'http://localhost:5000/test.geojson'
+                url: 'http://localhost:5000/test.geojson',
+                decodedBodySize: 155,
+                encodedBodySize: 155,
+                transferSize: 443
             };
 
             if (eventCount === 0) {

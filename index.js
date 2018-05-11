@@ -99,7 +99,10 @@ Instrumentile.prototype._dataLoadEvent = function (label, p) {
         TCP: TCP,
         SSL: SSL,
         request: request,
-        response: response
+        response: response,
+        transferSize: p.transferSize,
+        decodedBodySize: p.decodedBodySize,
+        encodedBodySize: p.encodedBodySize
     });
 };
 
