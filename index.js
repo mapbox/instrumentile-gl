@@ -20,7 +20,6 @@ function Instrumentile(map, options) {
     this.options = options || {};
     this.id = null;
     this.source = this.options.source || '';
-    this.schemaVersion = 2.1;
 
     if (!this.map)
         throw new TypeError('You must provide a valid Mapbox GL Map object');
