@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
 
                     // note its reception
-                    var elemName = e.event.replace('instrumentile.','').replace(/\./g, '-');
+                    var elemName = e.event.replace('instrumentile.', '').replace(/\./g, '-');
                     if (elemName === 'source-geojson')
                         elemName += '-' + (e.url.indexOf('step1') !== -1 ? 'load' : 'setdata');
                     var elem = document.getElementById(elemName);
