@@ -38,7 +38,7 @@ function Instrumentile(map, options) {
             token: this.options.token,
             flushAt: this.options.flushAt,
             flushAfter: this.options.flushAfter,
-            version: 2.1
+            version: 2
         });
 
     // apply schema versioning
