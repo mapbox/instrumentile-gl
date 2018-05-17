@@ -61,7 +61,7 @@ tape('map load event', (t) => {
                 response: 10,
                 source: 'test',
                 zoom: 3,
-                schema: 'instrumentile.map.load/2.1'
+                schema: 'instrumentile.map.load-2.1'
             };
             t.deepEquals(e, expected, 'load event is as expected');
             t.end();
@@ -121,7 +121,7 @@ tape('click event', (t) => {
                 lng: 1.1,
                 source: 'test',
                 zoom: 3,
-                schema: 'instrumentile.map.click/2.1'
+                schema: 'instrumentile.map.click-2.1'
             };
             t.deepEquals(e, expected, 'click event is as expected');
             t.end();
@@ -156,7 +156,7 @@ tape('dragend event', (t) => {
                 lng: 1.1,
                 source: 'test',
                 zoom: 3,
-                schema: 'instrumentile.map.dragend/2.1'
+                schema: 'instrumentile.map.dragend-2.1'
             };
             t.deepEquals(e, expected, 'dragend event is as expected');
             t.end();
@@ -199,7 +199,7 @@ tape('vt load event', (t) => {
                 encodedBodySize: 13511,
                 transferSize: 14189,
                 url: 'https://a.tiles.mapbox.com/v4/mapbox.mapbox-terrain-v2,mapbox.mapbox-streets-v7/4/14/6.vector.pbf',
-                schema: 'instrumentile.source.vt/2.1'
+                schema: 'instrumentile.source.vt-2.1'
             };
             t.deepEquals(e, expected, 'instrumentile.source.vt event is as expected');
             t.end();
@@ -274,7 +274,7 @@ tape('geojson load & setData events', (t) => {
                 decodedBodySize: 155,
                 encodedBodySize: 155,
                 transferSize: 443,
-                schema: 'instrumentile.source.geojson/2.1'
+                schema: 'instrumentile.source.geojson-2.1'
             };
 
             if (eventCount === 0) {

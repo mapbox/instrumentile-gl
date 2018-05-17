@@ -44,7 +44,7 @@ function Instrumentile(map, options) {
     // apply schema versioning
     this.events = {
         push: function (e) {
-            e.schema = e.event + '/2.1';
+            e.schema = e.event + '-2.1';
             that._events.push(e);
         }
     };
