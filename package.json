@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/instrumentile-gl",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "tileload metrics for Mapbox GL",
   "main": "index.js",
   "repository": "git://github.com/mapbox/instrumentile-gl.git",
