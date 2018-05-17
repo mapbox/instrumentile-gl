@@ -14,8 +14,6 @@ URLParse.prototype.toString = function () {
 };
 
 function Instrumentile(map, options) {
-    var that = this;
-
     this.map = map;
     this.options = options || {};
     this.id = null;
@@ -41,12 +39,14 @@ function Instrumentile(map, options) {
             version: 2
         });
 
+    function pushFunc(e) {
+        e.schema = e.event + '-2.1';
+        this._events.push(e);
+    }
+
     // apply schema versioning
     this.events = {
-        push: function (e) {
-            e.schema = e.event + '-2.1';
-            that._events.push(e);
-        }
+        push: pushFunc.bind(this)
     };
 
     if (this.options.stub && this.options.stub.performance)
@@ -56,10 +56,10 @@ function Instrumentile(map, options) {
     else
         this.performance = false;
 
-    map.on('data', function (mde) {
+    function dataFunc(mde) {
         // vector tile load event
         if (mde.tile && mde.tile.resourceTiming && (mde.tile.resourceTiming.length > 0))
-            that._dataLoadEvent('instrumentile.source.vt', mde.tile.resourceTiming[mde.tile.resourceTiming.length - 1]);
+            this._dataLoadEvent('instrumentile.source.vt', mde.tile.resourceTiming[mde.tile.resourceTiming.length - 1]);
         // GeoJSON load event
         else if (
             (mde.source) &&
@@ -69,9 +69,10 @@ function Instrumentile(map, options) {
             (mde.resourceTiming) &&
             (mde.resourceTiming.length > 0)
         )
-            that._dataLoadEvent('instrumentile.source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
-    });
+            this._dataLoadEvent('instrumentile.source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
+    }
 
+    map.on('data', dataFunc.bind(this));
     map.on('load', this._mapLoadEvent.bind(this));
     map.on('click', this._interactionEvent.bind(this, 'instrumentile.map.click'));
     map.on('dragend', this._interactionEvent.bind(this, 'instrumentile.map.dragend'));
