@@ -42,6 +42,9 @@
           "newIsCap": false
         }
       ]
+    },
+    "globals": {
+      "BlobBuilder": true
     }
   },
   "author": "Tom Lee <tlee@mapbox.com>",

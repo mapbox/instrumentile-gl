@@ -25,9 +25,6 @@ function Instrumentile(map, options) {
     if (!this.options.token)
         throw new TypeError('You must provide a valid Mapbox token');
 
-    if (!this.map._collectResourceTiming)
-        throw new TypeError('Instrumentile-GL requires Map.collectResourceTiming to be true (available in Mapbox GL JS >=0.44.0).');
-
     if (this.options.stub && this.options.stub.events)
         this._events = this.options.stub.events;
     else
@@ -51,8 +48,8 @@ function Instrumentile(map, options) {
 
     if (this.options.stub && this.options.stub.performance)
         this.performance = this.options.stub.performance;
-    else if (window && window.performance)
-        this.performance = performance;
+    else if (window && typeof window.performance !== 'undefined' && window.performance)
+        this.performance = window.performance;
     else
         this.performance = false;
 
@@ -72,19 +69,12 @@ function Instrumentile(map, options) {
             this._dataLoadEvent('instrumentile.source.geojson', mde.resourceTiming[mde.resourceTiming.length - 1]);
     }
 
-    map.on('data', dataFunc.bind(this));
+    if (this.map._collectResourceTiming)
+        map.on('data', dataFunc.bind(this));
     map.on('load', this._mapLoadEvent.bind(this));
     map.on('click', this._interactionEvent.bind(this, 'instrumentile.map.click'));
     map.on('dragend', this._interactionEvent.bind(this, 'instrumentile.map.dragend'));
 }
-
-Instrumentile.prototype._performance = function () {
-    //use performance.now over new Date() when available
-    if (this.performance && this.performance.now)
-        return this.performance.now();
-    else
-        return new Date();
-};
 
 Instrumentile.prototype._dataLoadEvent = function (label, p) {
     var url = new URLParse(p.name);
@@ -92,12 +82,17 @@ Instrumentile.prototype._dataLoadEvent = function (label, p) {
         .split('&')
         .filter(function (param) { return !/(^|\?)access_token=.*/.test(param); })
         .join('&');
-    var DNS = p.domainLookupEnd - p.domainLookupStart;
-    var TCP = p.connectEnd - p.connectStart;
-    var SSL = (!isNaN(parseFloat(p.secureConnectionStart)) && isFinite(p.secureConnectionStart)) ?
-        p.connectEnd - p.secureConnectionStart : undefined;
-    var request = p.responseStart - p.requestStart;
-    var response = p.responseEnd - p.responseStart;
+
+    var DNS, TCP, SSL, request, response;
+    if (p.entryType === 'resource') {
+        DNS = p.domainLookupEnd - p.domainLookupStart;
+        TCP = p.connectEnd - p.connectStart;
+        SSL = (!isNaN(parseFloat(p.secureConnectionStart)) && isFinite(p.secureConnectionStart)) ?
+            p.connectEnd - p.secureConnectionStart : undefined;
+        request = p.responseStart - p.requestStart;
+        response = p.responseEnd - p.responseStart;
+    }
+
     this.events.push({
         id: this.id,
         source: this.source,
@@ -174,6 +169,32 @@ Instrumentile.prototype._mapLoadEvent = function () {
     });
 };
 
-module.exports = function (map, options) {
-    return new Instrumentile(map, options);
+// static method to check availability of performance API in web workers
+Instrumentile.supportsWebWorkerPerformanceCollection = function (callback) {
+    window.URL = window.URL || window.webkitURL;
+    if (!window.Worker || !window.URL || typeof Blob === 'undefined' || typeof MSBlobBuilder !== 'undefined')
+        return callback(null, false);
+    var response = 'self.onmessage = function(e) { postMessage(typeof performance === \'undefined\' ? \'missing\' : \'found\'); }';
+    var blob;
+    try {
+        blob = new Blob([response], {type: 'application/javascript'});
+    } catch (e) { // Backward-compatibility
+        window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+        if (!window.BlobBuilder) return callback('no blobbuilder fallback', false);
+        blob = new BlobBuilder();
+        blob.append(response);
+        blob = blob.getBlob();
+    }
+    try {
+        var compatWorker = new Worker(URL.createObjectURL(blob));
+        compatWorker.onmessage = function (e) {
+            return callback(null, e.data === 'found');
+        };
+        compatWorker.postMessage(true);
+    } catch (e) {
+        return callback(e, false);
+    }
+    return null;
 };
+
+module.exports = Instrumentile;
