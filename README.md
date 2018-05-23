@@ -25,16 +25,19 @@ const instrumentile = require('@mapbox/instrumentile-gl');
 
 mapboxgl.accessToken = VALID_ACCESS_TOKEN;
 
-const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9',
-    collectResourceTiming: true /* <-- mandatory for instrumentile-gl */
-});
+// optional check for web worker performance API support -- avoids errors on Mapbox GL 0.44 & 0.45
+instrumentile.supportsWebWorkerPerformanceCollection(function(err, supported) {
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v9',
+        collectResourceTiming: supported
+    });
 
-var inst = instrumentile(map, {
-    token: VALID_ACCESS_TOKEN,
-    api: 'https://api.tiles.mapbox.com', // this is the default
-    source: 'whatevs' // optional source string that is sent along every event
+    const inst = new instrumentile(map, {
+        token: VALID_ACCESS_TOKEN,
+        api: 'https://api.tiles.mapbox.com', // this is the default
+        source: 'whatevs' // optional source string that is sent along every event
+    });
 });
 ```
 
