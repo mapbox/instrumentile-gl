@@ -70,7 +70,7 @@ tape('map load event', (t) => {
 
     const map = mapInit();
 
-    instrumentile(map, {
+    const inst = new instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -78,33 +78,21 @@ tape('map load event', (t) => {
             performance: perfStub
         }
     });
-});
-
-tape('throws error when collectResourceTiming=false', (t) => {
-    const map = mapInit({collectResourceTiming: false});
-    const eventsStub = {push: () => {}};
-    const inst = instrumentile.bind(null, map, {
-        token: TOKEN,
-        source: 'test',
-        stub: {
-            events: eventsStub,
-            performance: perfStub
-        }
-    });
-    t.throws(inst, /Instrumentile-GL requires Map\.collectResourceTiming to be true/i, 'throws when collectResourceTiming=false');
-    t.end();
+    t.ok(inst);
 });
 
 tape('throws error on missing token', (t) => {
     const map = mapInit();
     const eventsStub = {push: () => {}};
-    const inst = instrumentile.bind(null, map, {
-        source: 'test',
-        stub: {
-            events: eventsStub,
-            performance: perfStub
-        }
-    });
+    const inst = function () {
+        return new instrumentile(map, {
+            source: 'test',
+            stub: {
+                events: eventsStub,
+                performance: perfStub
+            }
+        });
+    };
     t.throws(inst, /You must provide a valid Mapbox token/i, 'throws on missing token');
     t.end();
 });
@@ -130,7 +118,7 @@ tape('click event', (t) => {
 
     const map = mapInit();
 
-    instrumentile(map, {
+    const inst = new instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -138,6 +126,7 @@ tape('click event', (t) => {
             performance: perfStub
         }
     });
+    t.ok(inst);
 
     setTimeout(() => {
         map.fire('click', {lngLat: {lng: 1.1, lat: 2.2}});
@@ -165,7 +154,7 @@ tape('dragend event', (t) => {
 
     const map = mapInit();
 
-    instrumentile(map, {
+    const inst = new instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -173,6 +162,7 @@ tape('dragend event', (t) => {
             performance: perfStub
         }
     });
+    t.ok(inst);
 
     setTimeout(() => {
         map.fire('dragend', {lngLat: {lng: 1.1, lat: 2.2}});
@@ -208,7 +198,7 @@ tape('vt load event', (t) => {
 
     const map = mapInit();
 
-    instrumentile(map, {
+    const inst = new instrumentile(map, {
         token: TOKEN,
         source: 'test',
         stub: {
@@ -216,6 +206,7 @@ tape('vt load event', (t) => {
             performance: perfStub
         }
     });
+    t.ok(inst);
 
     setTimeout(() => {
         map.fire('data', {
@@ -289,7 +280,7 @@ tape('geojson load & setData events', (t) => {
         }
     };
 
-    instrumentile(map, {
+    const inst = new instrumentile(map, {
         token: TOKEN,
         source: 'instrumentileTest',
         stub: {
@@ -297,6 +288,7 @@ tape('geojson load & setData events', (t) => {
             performance: perfStub
         }
     });
+    t.ok(inst);
 
     map.on('load', () => {
         map.addSource('fakeGeoJSONsource', {
@@ -305,3 +297,54 @@ tape('geojson load & setData events', (t) => {
         });
     });
 });
+
+tape('supportsWebWorkerPerformanceCollection=true', (t) => {
+    function Worker() {
+        var self = {};
+        self.postMessage = () => {
+            self.onmessage({data: 'found'});
+        };
+        return self;
+    }
+    global.Worker = Worker;
+    global.URL = {createObjectURL: () => {}};
+    global.window = {Worker: global.Worker, URL: global.URL};
+    global.Blob = function () { return true; };
+    instrumentile.supportsWebWorkerPerformanceCollection((err, res) => {
+        t.error(err);
+        t.equals(res, true, 'returns true when facilities are available');
+        t.end();
+    });
+});
+
+tape('supportsWebWorkerPerformanceCollection=false (IE 10)', (t) => {
+    function Worker() {
+        var self = {};
+        self.postMessage = () => {
+            self.onmessage({data: 'found'});
+        };
+        return self;
+    }
+    global.Worker = Worker;
+    global.URL = {createObjectURL: () => {}};
+    global.window = {Worker: global.Worker, URL: global.URL};
+    global.MSBlobBuilder = true;
+    global.Blob = function () { return true; };
+    instrumentile.supportsWebWorkerPerformanceCollection((err, res) => {
+        t.error(err);
+        t.equals(res, false, 'returns false when MSBlobBuilder is defined');
+        t.end();
+    });
+});
+
+tape('supportsWebWorkerPerformanceCollection=false (no web workers)', (t) => {
+    global.Worker = false;
+    global.URL = {createObjectURL: () => {}};
+    global.window = {Worker: global.Worker, URL: global.URL};
+    instrumentile.supportsWebWorkerPerformanceCollection((err, res) => {
+        t.error(err);
+        t.equals(res, false, 'returns false when Worker is undefined');
+        t.end();
+    });
+});
+

@@ -7,28 +7,30 @@
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.css' rel='stylesheet' />
 <style>
   body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
+  #map { position:absolute; top:0; bottom:0; width:100%; height: 100%; }
   #diagnostic { position: absolute; top: 1em; left: 1em; background-color: rgba(255, 255, 255, 0.8); z-index: 9; padding: 0.5em; font-family: helvetica, arial, sans-serif; font-size: 16pt;}
   #diagnostic h2 { margin-top: 0; }
   #diagnostic ul { list-style: none; padding: 0; margin: 0;}
   #diagnostic li span { color: red; margin-right: 0.5em; }
   #diagnostic li.success span { color: green; }
+  #diagnostic li.na { color: #aaa; }
+  #diagnostic li.na span { color: yellow; }
 }
 </style>
 </head>
 <body>
 <div id='map'></div>
 <div id='diagnostic'>
-	<h2>Instrumentile Events</h2>
-	<ul>
-		<li id="map-load"><span>X</span>map.load</li>
-		<li id="source-vt"><span>X</span>source.vt</li>
-		<li id="source-geojson-load"><span>X</span>source.geojson (source load)</li>
-		<li id="source-geojson-setdata"><span>X</span>source.geojson (setData)</li>
-		<li id="map-click"><span>X</span>map.click</li>
-		<li id="map-dragend"><span>X</span>map.dragend</li>
-		
-	</ul>
+    <h2>Instrumentile Events</h2>
+    <ul>
+        <li id="supports"><span>X</span>Instrumentile.supportsWebWorkerPerformanceCollection (in supported browsers)</li>
+        <li id="map-load"><span>X</span>map.load</li>
+        <li id="source-vt"><span>X</span>source.vt</li>
+        <li id="source-geojson-load"><span>X</span>source.geojson (source load)</li>
+        <li id="source-geojson-setdata"><span>X</span>source.geojson (setData)</li>
+        <li id="map-click"><span>X</span>map.click</li>
+        <li id="map-dragend"><span>X</span>map.dragend</li>
+    </ul>
 </div>
 <script src="bundle.js"></script>
 </body>
