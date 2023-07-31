@@ -17,14 +17,14 @@
     "uglify-js": "^3.3.23"
   },
   "devDependencies": {
-    "browserify": "^6.3.2",
+    "browserify": "^17.0.0",
     "eslint": "^4.19.0",
     "eslint-config-mourner": "^2.0.3",
     "mapbox-gl": "^0.44.0",
     "mapbox-gl-js-mock": "^1.0.2",
     "serve": "^1.4.0",
     "tape": "2.13.x",
-    "watchify": "^2.3.0"
+    "watchify": "^4.0.0"
   },
   "scripts": {
     "start": "watchify --standalone instrumentile-gl -d ./index.js -o ./bundle.js & serve",
